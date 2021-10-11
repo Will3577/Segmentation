@@ -85,9 +85,10 @@ for x in (ids_train_x):
     x_img = cv2.imread(x)
     x_img = cv2.resize(x_img,(im_width,im_height))
     x_img = x_img/255.0
-    print(x_img.shape)
+    # print(x_img.shape)
     # Load masks
-    # mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
+    mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
+    print(mask.shape)
     mask = cv2.imread(y,0)
     mask = np.array(cv2.resize(mask,(im_width,im_height)))
     mask = mask/255.0
