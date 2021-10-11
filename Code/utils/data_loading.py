@@ -67,7 +67,7 @@ class BasicDataset(Dataset):
         elif ext in ['.pt', '.pth']:
             return Image.fromarray(torch.load(filename).numpy())
         else:
-            return img_to_array(load_img(filename, color_mode='rgb',target_size=scale))
+            return load_img(filename, color_mode='rgb',target_size=scale)
             # return Image.open(filename)
 
     def __getitem__(self, idx):
