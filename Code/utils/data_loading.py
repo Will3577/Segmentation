@@ -115,6 +115,7 @@ class MyDataset(Dataset):
     super(MyDataset, self).__init__()
     self.img_list = img_list
     self.mask_list = mask_list
+    print(img_list.shape,mask_list.shape)
     assert img_list.shape==mask_list.shape
 
   def __len__(self):
