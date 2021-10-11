@@ -5,7 +5,7 @@ import os
 
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-from keras.optimizers import Adam, nadam,SGD
+from keras.optimizers import Adam, nadam, SGD
 from keras.layers import Input
 # from Code.utils.lossfunctions import jaccard_distance_loss,dice_coef_loss
 from Code.utils.metricfunctions import dice_coef,f1
