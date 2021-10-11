@@ -113,6 +113,11 @@ y_train = y_train.reshape(-1,patch_height,patch_width,1)
 X_test = X_test.reshape(-1,patch_height,patch_width,3)
 y_test = y_test.reshape(-1,patch_height,patch_width,1)
 
+X_train = np.transpose(X_train, (0, 3, 1, 2))
+y_train = np.transpose(y_train, (0, 3, 1, 2))
+X_test = np.transpose(X_test, (0, 3, 1, 2))
+y_test = np.transpose(y_test, (0, 3, 1, 2))
+
 # 1. Create dataset
 img_scale = [im_width,im_height]
 # dataset = BasicDataset(TRAIN_PATH_IMAGES, TRAIN_PATH_GT, img_scale)
