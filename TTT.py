@@ -146,6 +146,9 @@ val_loader = DataLoader(val_set, shuffle=False, drop_last=True, **loader_args)
 #     )
 net = UNet(n_channels=3, n_classes=2, bilinear=True)
 
+if torch.cuda.is_available():
+    net.cuda()
+
 from tqdm import tqdm
 from torch import optim
 import torch.nn.functional as F
