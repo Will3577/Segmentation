@@ -144,7 +144,7 @@ val_loader = DataLoader(val_set, shuffle=False, drop_last=True, **loader_args)
 #         in_channels=3,                  # model input channels (1 for gray-scale images, 3 for RGB, etc.)
 #         classes=2,                      # model output channels (number of classes in your dataset)
 #     )
-net = UNet(n_channels=3, n_classes=2, bilinear=True)
+net = UNet(n_channels=3, n_classes=1, bilinear=True)
 
 if torch.cuda.is_available():
     net.cuda()
@@ -156,6 +156,13 @@ from evaluate import evaluate
 
 save_checkpoint = True
 dir_checkpoint = '/content/Segmentation/Results/weights/UNET'
+try:
+    os.makedirs(dir_checkpoint)
+except OSError:
+    print ("Creation of the directory %s failed" % dir_checkpoint)
+else:
+    print ("Successfully created the directory %s" % dir_checkpoint)
+
 amp = False
 learning_rate = 0.001
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -189,7 +196,7 @@ for epoch in range(epochs):
                 loss = criterion(masks_pred, true_masks) \
                         + dice_loss(F.softmax(masks_pred, dim=1).float(),
                                     F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
-                                    multiclass=True)
+                                    multiclass=False)
 
             optimizer.zero_grad(set_to_none=True)
             grad_scaler.scale(loss).backward()
