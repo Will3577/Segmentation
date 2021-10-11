@@ -55,8 +55,13 @@ class BasicDataset(Dataset):
             new_imgs = view_as_windows(img_ndarray, (patch_width, patch_height, 3), (patch_width//2, patch_height//2, 3))
         else:
             new_imgs = view_as_windows(img_ndarray, (patch_width, patch_height, 1), (patch_width//2, patch_height//2, 1))
+        
         for im in new_imgs:
             imgs.append(im)
+        if not is_mask:
+            imgs = imgs.reshape(-1,patch_height,patch_width,3)
+        else:
+            imgs = imgs.reshape(-1,patch_height,patch_width,1)
         return imgs#img_ndarray
 
     @classmethod
