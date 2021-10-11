@@ -1,9 +1,9 @@
 {
   "im_width" : 1000,
   "im_height" : 1000,
-  "TRAIN_PATH_IMAGES" : "./Datasets/MonuSeg/Training/TissueImages/*",
+  "TRAIN_PATH_IMAGES" : "./Datasets/MonuSeg/Training/TissueImages/",
   "TRAIN_PATH_GT" : "./Datasets/MonuSeg/Training/GroundTruth/",
-  "TEST_PATH_IMAGES" : "./Datasets/MonuSeg/Test/TissueImages/*",
+  "TEST_PATH_IMAGES" : "./Datasets/MonuSeg/Test/TissueImages/",
   "TEST_PATH_GT" : "./Datasets/MonuSeg/Test/GroundTruth/",
   "Epochs" : 1, 
   "Batch" : 8,
