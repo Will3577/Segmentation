@@ -167,8 +167,8 @@ if config['Model'] == "UNET":
     model1 = smp.Unet(
         encoder_name="resnet34",        # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
         encoder_weights="imagenet",     # use `imagenet` pre-trained weights for encoder initialization
-        in_channels=1,                  # model input channels (1 for gray-scale images, 3 for RGB, etc.)
-        classes=3,                      # model output channels (number of classes in your dataset)
+        in_channels=3,                  # model input channels (1 for gray-scale images, 3 for RGB, etc.)
+        classes=1,                      # model output channels (number of classes in your dataset)
     )
 
 if config['Model'] == "SEGNET":
@@ -195,67 +195,145 @@ print("Compiling Model")
 #
 
 
-#nadam(lr=1e-5)
-#Adam(1e-5, amsgrad=True, clipnorm=5.0)
-#Adam()
-#SGD(lr=1e-5, momentum=0.95)
-callbacks = [
-    EarlyStopping(patience=10, verbose=1),
-    ReduceLROnPlateau(factor=0.1, patience=10, min_lr=0.00001, verbose=1),
-    ModelCheckpoint('/content/Segmentation/Results/weights/'+str(config['Model'])+'/'+str(config['Model'])+'-Best.h5', monitor='val_dice_coef',mode = 'max' , verbose=1, save_best_only=True, save_weights_only=False)
-]
-X_train = X_train.reshape(-1,patch_height,patch_width,3)
-y_train = y_train.reshape(-1,patch_height,patch_width,1)
-X_test = X_test.reshape(-1,patch_height,patch_width,3)
-y_test = y_test.reshape(-1,patch_height,patch_width,1)
+import catalyst
+from catalyst import dl, metrics, utils
 
-print(X_train.shape, y_train.shape)
-print(X_test.shape, y_test.shape)
+import torch
+from torch.nn import functional as F
+
+class CustomRunner(dl.Runner):
+    
+    def on_loader_start(self, runner):
+        super().on_loader_start(runner)
+        self.meters = {
+            key: metrics.AdditiveMetric(compute_on_call=False)
+            for key in ["loss", "mae"]
+        }
+
+    def handle_batch(self, batch):
+        # Unpack the data. Its structure depends on your model and
+        # on what you pass to `train()`.
+        x, y = batch
+
+        y_pred = self.model(x) # Forward pass
+
+        # Compute the loss value
+        loss = jaccard_distance_loss(y,y_pred)
+
+        # Update metrics (includes the metric that tracks the loss)
+        self.batch_metrics.update({"loss": loss, "dice_coef": dice_coef(y,y_pred)})
+        for key in ["loss", "dice_coef"]:
+            self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
+
+        if self.is_train_loader:
+            # Compute gradients
+            loss.backward()
+            # Update weights
+            # (the optimizer is stored in `self.state`)
+            self.optimizer.step()
+            self.optimizer.zero_grad()
+    
+    def on_loader_end(self, runner):
+        for key in ["loss", "dice_coef"]:
+            self.loader_metrics[key] = self.meters[key].compute()[0]
+        super().on_loader_end(runner)
 
 
-results = model.fit(X_train, y_train, batch_size=config['Batch'], verbose=1, epochs=Epochs, callbacks=callbacks,\
-                    validation_data=(X_test, y_test))
+import numpy as np
+import torch
+from torch.utils.data import DataLoader, TensorDataset
 
-print(model.evaluate(X_test, y_test, verbose=1))
+dataset = TensorDataset(X_train, y_train)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {"train": loader, "valid": loader}
+
+optimizer = torch.optim.Adam(model1.parameters())
+runner = CustomRunner()
+runner.train(
+  model=model1, 
+  optimizer=optimizer, 
+  loaders=loaders, 
+  num_epochs=3,
+  verbose=True, # you can pass True for more precise training process logging
+  timeit=False, # you can pass True to measure execution time of different parts of train process
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# #nadam(lr=1e-5)
+# #Adam(1e-5, amsgrad=True, clipnorm=5.0)
+# #Adam()
+# #SGD(lr=1e-5, momentum=0.95)
+# callbacks = [
+#     EarlyStopping(patience=10, verbose=1),
+#     ReduceLROnPlateau(factor=0.1, patience=10, min_lr=0.00001, verbose=1),
+#     ModelCheckpoint('/content/Segmentation/Results/weights/'+str(config['Model'])+'/'+str(config['Model'])+'-Best.h5', monitor='val_dice_coef',mode = 'max' , verbose=1, save_best_only=True, save_weights_only=False)
+# ]
+# X_train = X_train.reshape(-1,patch_height,patch_width,3)
+# y_train = y_train.reshape(-1,patch_height,patch_width,1)
+# X_test = X_test.reshape(-1,patch_height,patch_width,3)
+# y_test = y_test.reshape(-1,patch_height,patch_width,1)
+
+# print(X_train.shape, y_train.shape)
+# print(X_test.shape, y_test.shape)
+
+
+# results = model.fit(X_train, y_train, batch_size=config['Batch'], verbose=1, epochs=Epochs, callbacks=callbacks,\
+#                     validation_data=(X_test, y_test))
+
+# print(model.evaluate(X_test, y_test, verbose=1))
           
-plt.figure(figsize=(8, 8))
-plt.title("Learning curve")
-plt.plot(results.history["loss"], label="loss")
-plt.plot(results.history["val_loss"], label="val_loss")
-plt.plot( np.argmin(results.history["val_loss"]), np.min(results.history["val_loss"]), marker="x", color="r", label="best model")
-plt.xlabel("Epochs")
-plt.ylabel("log_loss")
-plt.legend();
-plt.savefig('./Results/plots/'+str(config['Model'])+'/train_loss.png')
+# plt.figure(figsize=(8, 8))
+# plt.title("Learning curve")
+# plt.plot(results.history["loss"], label="loss")
+# plt.plot(results.history["val_loss"], label="val_loss")
+# plt.plot( np.argmin(results.history["val_loss"]), np.min(results.history["val_loss"]), marker="x", color="r", label="best model")
+# plt.xlabel("Epochs")
+# plt.ylabel("log_loss")
+# plt.legend();
+# plt.savefig('./Results/plots/'+str(config['Model'])+'/train_loss.png')
 
-plt.figure(figsize=(8, 8))
-plt.title("Learning curve")
-plt.plot(results.history["dice_coef"], label="dice_coef")
-plt.plot(results.history["val_dice_coef"], label="val_dice_coef")
-plt.plot( np.argmax(results.history["val_dice_coef"]), np.max(results.history["val_dice_coef"]), marker="x", color="r", label="best model")
-plt.xlabel("Epochs")
-plt.ylabel("Dice Coeff")
-plt.legend();
-plt.savefig('./Results/plots/'+str(config['Model'])+'/train_dice.png')
+# plt.figure(figsize=(8, 8))
+# plt.title("Learning curve")
+# plt.plot(results.history["dice_coef"], label="dice_coef")
+# plt.plot(results.history["val_dice_coef"], label="val_dice_coef")
+# plt.plot( np.argmax(results.history["val_dice_coef"]), np.max(results.history["val_dice_coef"]), marker="x", color="r", label="best model")
+# plt.xlabel("Epochs")
+# plt.ylabel("Dice Coeff")
+# plt.legend();
+# plt.savefig('./Results/plots/'+str(config['Model'])+'/train_dice.png')
 
-plt.figure(figsize=(8, 8))
-plt.title("Learning curve")
-plt.plot(results.history["f1"], label="f1")
-plt.plot(results.history["val_f1"], label="val_f1")
-plt.plot( np.argmax(results.history["val_f1"]), np.max(results.history["val_f1"]), marker="x", color="r", label="best model")
-plt.xlabel("Epochs")
-plt.ylabel("f1")
-plt.legend();
-plt.savefig('./Results/plots/'+str(config['Model'])+'/train_f1.png')
+# plt.figure(figsize=(8, 8))
+# plt.title("Learning curve")
+# plt.plot(results.history["f1"], label="f1")
+# plt.plot(results.history["val_f1"], label="val_f1")
+# plt.plot( np.argmax(results.history["val_f1"]), np.max(results.history["val_f1"]), marker="x", color="r", label="best model")
+# plt.xlabel("Epochs")
+# plt.ylabel("f1")
+# plt.legend();
+# plt.savefig('./Results/plots/'+str(config['Model'])+'/train_f1.png')
 
-plt.figure(figsize=(8, 8))
-plt.title("Learning curve")
-plt.plot(results.history["accuracy"], label="accuracy")
-plt.plot(results.history["val_accuracy"], label="val_accuracy")
-plt.plot( np.argmax(results.history["val_accuracy"]), np.max(results.history["val_accuracy"]), marker="x", color="r", label="best model")
-plt.xlabel("Epochs")
-plt.ylabel("accuracy")
-plt.legend();
-plt.savefig('./Results/plots/'+str(config['Model'])+'/train_accuracy.png')
+# plt.figure(figsize=(8, 8))
+# plt.title("Learning curve")
+# plt.plot(results.history["accuracy"], label="accuracy")
+# plt.plot(results.history["val_accuracy"], label="val_accuracy")
+# plt.plot( np.argmax(results.history["val_accuracy"]), np.max(results.history["val_accuracy"]), marker="x", color="r", label="best model")
+# plt.xlabel("Epochs")
+# plt.ylabel("accuracy")
+# plt.legend();
+# plt.savefig('./Results/plots/'+str(config['Model'])+'/train_accuracy.png')
 
 
