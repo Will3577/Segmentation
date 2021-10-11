@@ -22,6 +22,8 @@ import tensorflow as tf
 from skimage.util.shape import view_as_windows
 import json
 
+import cv2
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
 # from tensorflow.python.client import device_lib
@@ -78,10 +80,15 @@ for x in (ids_train_x):
     base=os.path.basename(x)
     fn = os.path.splitext(base)[0]
     y = glob.glob(config['TRAIN_PATH_GT']+fn+'*')[0]
-    x_img = img_to_array(load_img(x, color_mode='rgb', target_size=[im_width,im_height]))
+
+    # x_img = img_to_array(load_img(x, color_mode='rgb', target_size=[im_width,im_height]))
+    x_img = cv2.imread(x)
+    x_img = cv2.resize(x_img,(1000,1000))
     x_img = x_img/255.0
     # Load masks
-    mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
+    # mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
+    mask = cv2.imread(y,0)
+    mask = cv2.resize(mask,(1000,1000))
     mask = mask/255.0
     #X_train[count] = x_img/255.0
     #y_train[count] = mask/255.0
