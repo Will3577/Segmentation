@@ -208,7 +208,7 @@ for epoch in range(epochs):
             grad_scaler.step(optimizer)
             grad_scaler.update()
 
-            # pbar.update(images.shape[0])
+            pbar.update(images.shape[0])
             global_step += 1
             epoch_loss += loss.item()
             # experiment.log({
