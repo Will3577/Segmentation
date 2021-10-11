@@ -22,10 +22,11 @@ import tensorflow as tf
 from skimage.util.shape import view_as_windows
 import json
 
+from tensorflow.python.client import device_lib
 with tf.device('/device:GPU:0'):
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
-    from tensorflow.python.client import device_lib
+    
     print(device_lib.list_local_devices())
     gpus = tf.config.experimental.list_physical_devices('GPU')
     if gpus:
