@@ -23,7 +23,7 @@ from skimage.util.shape import view_as_windows
 import json
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+# print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:
