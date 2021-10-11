@@ -82,14 +82,15 @@ for x in (ids_train_x):
     y = glob.glob(config['TRAIN_PATH_GT']+fn+'*')[0]
 
     x_img = img_to_array(load_img(x, color_mode='rgb', target_size=[im_width,im_height]))
-    # x_img = cv2.imread(x)
-    # x_img = cv2.resize(x_img,(im_width,im_height))
+    x_img = cv2.imread(x)
+    x_img = cv2.resize(x_img,(im_width,im_height))
     x_img = x_img/255.0
     # Load masks
-    mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
-    # mask = cv2.imread(y,0)
-    # mask = np.array(cv2.resize(mask,(im_width,im_height)))
+    # mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
+    mask = cv2.imread(y,0)
+    mask = np.array(cv2.resize(mask,(im_width,im_height)))
     mask = mask/255.0
+    print(mask.shape)
     #X_train[count] = x_img/255.0
     #y_train[count] = mask/255.0
     new_imgs = view_as_windows(x_img, (patch_width, patch_height, 3), (patch_width//2, patch_height//2, 3))
