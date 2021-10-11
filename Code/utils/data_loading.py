@@ -38,7 +38,8 @@ class BasicDataset(Dataset):
             pil_img = ImageOps.grayscale(pil_img)
 
         # pil_img = pil_img.resize((newW, newH))
-        img_ndarray = np.asarray(pil_img)
+        # img_ndarray = np.asarray(pil_img)
+        img_ndarray = img_to_array(pil_img)
 
         # if img_ndarray.ndim == 2 and not is_mask:
         #     img_ndarray = img_ndarray[np.newaxis, ...]
