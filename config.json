@@ -5,7 +5,7 @@
   "TRAIN_PATH_GT" : "./Datasets/MonuSeg/Training/GroundTruth/",
   "TEST_PATH_IMAGES" : "./Datasets/MonuSeg/Test/TissueImages/*",
   "TEST_PATH_GT" : "./Datasets/MonuSeg/Test/GroundTruth/",
-  "Epochs" : 2, 
+  "Epochs" : 1, 
   "Batch" : 8,
   "Model" : "UNET",
   "patch_width" : 256 ,
