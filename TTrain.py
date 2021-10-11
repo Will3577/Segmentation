@@ -165,7 +165,7 @@ if config['Model'] == "DEEPLAB":
                OS=16, alpha=1., activation='sigmoid')
     model.compile(optimizer=tf.keras.optimizers.Adam(amsgrad=True), loss=jaccard_distance_loss, metrics=["accuracy", dice_coef, f1])
     #plot_model(model, to_file='./Code/network/deeplab/deeplab_plot.png', show_shapes=True, show_layer_names=True)
- 
+
 print("Compiling Model")
 #model.compile(optimizer=sgd(), loss="binary_crossentropy"dice_coef_loss,jaccard_distance_loss metrics=["accuracy"]) # ,f1_m,iou_coef,dice_coef
 #

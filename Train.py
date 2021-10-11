@@ -178,7 +178,7 @@ print("Compiling Model")
 callbacks = [
     EarlyStopping(patience=10, verbose=1),
     ReduceLROnPlateau(factor=0.1, patience=10, min_lr=0.00001, verbose=1),
-    ModelCheckpoint('./Results/weights/'+str(config['Model'])+'/'+str(config['Model'])+'-Best.h5', monitor='val_dice_coef',mode = 'max' , verbose=1, save_best_only=True, save_weights_only=False)
+    ModelCheckpoint('/content/Segmentation/Results/weights/'+str(config['Model'])+'/'+str(config['Model'])+'-Best.h5', monitor='val_dice_coef',mode = 'max' , verbose=1, save_best_only=True, save_weights_only=False)
 ]
 X_train = X_train.reshape(-1,patch_height,patch_width,3)
 y_train = y_train.reshape(-1,patch_height,patch_width,1)
