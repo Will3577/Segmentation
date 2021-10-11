@@ -88,13 +88,13 @@ for x in (ids_train_x):
     # print(x_img.shape)
     # Load masks
     mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
-    print(mask.shape)
-    mask = cv2.imread(y)
-    mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
-    mask = cv2.resize(mask,(im_width,im_height))
+    # print(mask.shape)
+    # mask = cv2.imread(y,0)
+    # mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
+    # mask = cv2.resize(mask,(im_width,im_height))
     # mask = np.expand_dims(mask, axis=1)
     mask = mask/255.0
-    print(mask.shape)
+    # print(mask.shape)
     #X_train[count] = x_img/255.0
     #y_train[count] = mask/255.0
     new_imgs = view_as_windows(x_img, (patch_width, patch_height, 3), (patch_width//2, patch_height//2, 3))
@@ -120,9 +120,9 @@ for x in (ids_test_x):
     x_img = cv2.resize(x_img,(im_width,im_height))
     x_img = x_img/255.0
     # Load masks
-    # mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
-    mask = cv2.imread(y,0)
-    mask = cv2.resize(mask,(im_width,im_height))
+    mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
+    # mask = cv2.imread(y,0)
+    # mask = cv2.resize(mask,(im_width,im_height))
     mask = mask/255.0
     #X_test[count] = x_img/255.0
     #y_test[count] = mask/255.0
@@ -163,6 +163,13 @@ if config['Model'] == "UNET":
     print("Printing Model Summary")
     print (model.summary())
     tf.keras.utils.plot_model(model, './Code/network/unet/unet_plot.png')
+
+    model1 = smp.Unet(
+        encoder_name="resnet34",        # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
+        encoder_weights="imagenet",     # use `imagenet` pre-trained weights for encoder initialization
+        in_channels=1,                  # model input channels (1 for gray-scale images, 3 for RGB, etc.)
+        classes=3,                      # model output channels (number of classes in your dataset)
+    )
 
 if config['Model'] == "SEGNET":
     print("Loading SEGNET Model")
