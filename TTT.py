@@ -144,7 +144,7 @@ val_loader = DataLoader(val_set, shuffle=False, drop_last=True, **loader_args)
 #         in_channels=3,                  # model input channels (1 for gray-scale images, 3 for RGB, etc.)
 #         classes=2,                      # model output channels (number of classes in your dataset)
 #     )
-net = UNet(n_channels=3, n_classes=1, bilinear=True)
+net = UNet(n_channels=3, n_classes=2, bilinear=True)
 
 if torch.cuda.is_available():
     net.cuda()
@@ -196,7 +196,7 @@ for epoch in range(epochs):
                 loss = criterion(masks_pred, true_masks) \
                         + dice_loss(F.softmax(masks_pred, dim=1).float(),
                                     F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
-                                    multiclass=False)
+                                    multiclass=true_masks)
 
             optimizer.zero_grad(set_to_none=True)
             grad_scaler.scale(loss).backward()
