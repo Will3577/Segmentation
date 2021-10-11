@@ -6,7 +6,7 @@ from Code.utils.lossfunctions import *
 import os
 import tensorflow as tf
 from torch.utils.data import DataLoader, random_split
-import segmentation_models_pytorch as smp
+# import segmentation_models_pytorch as smp
 
 from skimage.util.shape import view_as_windows
 import json
