@@ -110,7 +110,7 @@ class BasicDataset(Dataset):
 #     img = self.img_list[idx]
 #     return self.augmentations(img)
 
-class MyDataset(torch.util.data.Dataset):
+class MyDataset(Dataset):
   def __init__(self, img_list, mask_list):
     super(MyDataset, self).__init__()
     self.img_list = img_list
