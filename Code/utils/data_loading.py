@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from PIL import Image, ImageOps
 from torch.utils.data import Dataset
-
+from skimage.util.shape import view_as_windows
 
 class BasicDataset(Dataset):
     def __init__(self, images_dir: str, masks_dir: str, scale: list = [1000,1000], mask_suffix: str = '_bin_mask'):
@@ -45,8 +45,14 @@ class BasicDataset(Dataset):
 
         # if not is_mask:
         img_ndarray = img_ndarray / 255.0
+        patch_width = 256
+        patch_height = 256
+        if not is_mask:
+            new_imgs = view_as_windows(img_ndarray, (patch_width, patch_height, 3), (patch_width//2, patch_height//2, 3))
+        else:
+            new_imgs = view_as_windows(img_ndarray, (patch_width, patch_height, 1), (patch_width//2, patch_height//2, 1))
 
-        return img_ndarray
+        return new_imgs#img_ndarray
 
     @classmethod
     def load(cls, filename):
