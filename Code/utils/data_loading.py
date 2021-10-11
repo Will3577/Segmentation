@@ -97,6 +97,33 @@ class BasicDataset(Dataset):
             'mask': torch.as_tensor(mask.copy()).long().contiguous()
         }
 
+# class MyDataset(torch.util.data.Dataset):
+#   def __init__(self, img_list, augmentations):
+#     super(MyDataset, self).__init__()
+#     self.img_list = img_list
+#     self.augmentations = augmentations
+
+#   def __len__(self):
+#     return len(self.img_list)
+
+#   def __getitem__(self, idx):
+#     img = self.img_list[idx]
+#     return self.augmentations(img)
+
+class MyDataset(torch.util.data.Dataset):
+  def __init__(self, img_list, mask_list):
+    super(MyDataset, self).__init__()
+    self.img_list = img_list
+    self.mask_list = mask_list
+    assert img_list.shape==mask_list.shape
+
+  def __len__(self):
+    return len(self.img_list)
+
+  def __getitem__(self, idx):
+    img = self.img_list[idx]
+    mask = self.mask_list[idx]
+    return img
 
 class CarvanaDataset(BasicDataset):
     def __init__(self, images_dir, masks_dir, scale=1):

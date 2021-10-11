@@ -14,6 +14,7 @@ import cv2
 import torch
 import torch.nn as nn
 from Code.utils.data_loading import *
+import glob
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -35,12 +36,87 @@ TEST_PATH_IMAGES = config['TEST_PATH_IMAGES']
 TEST_PATH_GT = config['TEST_PATH_GT']
 
 
+ids_train_x = glob.glob(TRAIN_PATH_IMAGES)
+ids_train_y = glob.glob(TRAIN_PATH_GT)
+print("No. of training images = ", len(ids_train_x))
+ids_test_x = glob.glob(TEST_PATH_IMAGES)
+ids_test_y = glob.glob(TEST_PATH_GT)
+print("No. of testing images = ", len(ids_test_x))
+
+#X_train = np.zeros((len(ids_train_x), im_height, im_width, 3), dtype=np.float32)
+#y_train = np.zeros((len(ids_train_y), im_height, im_width, 1), dtype=np.float32)
+
+#X_test = np.zeros((len(ids_test_x), im_height, im_width, 3), dtype=np.float32)
+#y_test = np.zeros((len(ids_test_y), im_height, im_width, 1), dtype=np.float32)
+
+X_train = []
+y_train = []
+X_test = []
+y_test = []
+
+print("Loading Training Data")
+count =0 
+for x in (ids_train_x):
+    base=os.path.basename(x)
+    fn = os.path.splitext(base)[0]
+    y = glob.glob(config['TRAIN_PATH_GT']+fn+'*')[0]
+    x_img = img_to_array(load_img(x, color_mode='rgb', target_size=[im_width,im_height]))
+    x_img = x_img/255.0
+    # Load masks
+    mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
+    mask = mask/255.0
+    #X_train[count] = x_img/255.0
+    #y_train[count] = mask/255.0
+    new_imgs = view_as_windows(x_img, (patch_width, patch_height, 3), (patch_width//2, patch_height//2, 3))
+    #print("Number of Patches")
+    #print(new_imgs.shape)
+    for patch in new_imgs:
+        X_train.append(patch)
+    new_masks = view_as_windows(mask, (patch_width, patch_height, 1), (patch_width//2, patch_height//2, 1))
+    for patch in new_masks:
+        y_train.append(patch)
+    count = count+1
+
+
+
+print("Loading Testing Data")
+count =0 
+for x in (ids_test_x):
+    base=os.path.basename(x)
+    fn = os.path.splitext(base)[0]
+    y = glob.glob(config['TEST_PATH_GT']+fn+'*')[0]
+    x_img = img_to_array(load_img(x, color_mode='rgb', target_size=[im_width,im_height]))
+    x_img = x_img/255.0
+    # Load masks
+    mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
+    mask = mask/255.0
+    #X_test[count] = x_img/255.0
+    #y_test[count] = mask/255.0
+    new_imgs = view_as_windows(x_img, (patch_width, patch_height, 3), (patch_width//2, patch_height//2, 3))
+    for patch in new_imgs:
+        X_test.append(patch)
+    new_masks = view_as_windows(mask, (patch_width, patch_height, 1), (patch_width//2, patch_height//2, 1))
+    for patch in new_masks:
+        y_test.append(patch)
+    count = count+1
+
+
+#print(len(X_train),len(y_train))
+#print(len(X_test),len(y_test))
+X_train = np.array(X_train) 
+y_train = np.array(y_train) 
+X_test = np.array(X_test) 
+y_test = np.array(y_test)
+
+
+
 # 1. Create dataset
 img_scale = [im_width,im_height]
-dataset = BasicDataset(TRAIN_PATH_IMAGES, TRAIN_PATH_GT, img_scale)
+# dataset = BasicDataset(TRAIN_PATH_IMAGES, TRAIN_PATH_GT, img_scale)
+dataset = MyDataset(X_train,y_train)
 
 # 2. Split into train / validation partitions
-n_val = 14 #int(len(dataset) * val_percent)
+n_val = 256 #int(len(dataset) * val_percent)
 n_train = len(dataset) - n_val
 train_set, val_set = random_split(dataset, [n_train, n_val], generator=torch.Generator().manual_seed(0))
 
