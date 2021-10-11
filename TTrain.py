@@ -89,7 +89,8 @@ for x in (ids_train_x):
     # Load masks
     mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
     print(mask.shape)
-    mask = cv2.imread(y,0)
+    mask = cv2.imread(y)
+    mask = cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
     mask = cv2.resize(mask,(im_width,im_height))
     # mask = np.expand_dims(mask, axis=1)
     mask = mask/255.0
