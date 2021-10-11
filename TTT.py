@@ -195,8 +195,11 @@ for epoch in range(epochs):
 
             with torch.cuda.amp.autocast(enabled=amp):
                 masks_pred = net(images)
-                loss = criterion(masks_pred, true_masks) \
-                        + dice_loss(F.softmax(masks_pred, dim=1).float(),
+                # loss = criterion(masks_pred, true_masks) \
+                #         + dice_loss(F.softmax(masks_pred, dim=1).float(),
+                #                     F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
+                #                     multiclass=True)
+                loss = dice_loss(F.softmax(masks_pred, dim=1).float(),
                                     F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
                                     multiclass=True)
 
@@ -205,7 +208,7 @@ for epoch in range(epochs):
             grad_scaler.step(optimizer)
             grad_scaler.update()
 
-            pbar.update(images.shape[0])
+            # pbar.update(images.shape[0])
             global_step += 1
             epoch_loss += loss.item()
             # experiment.log({
