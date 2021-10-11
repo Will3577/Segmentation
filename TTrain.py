@@ -90,7 +90,8 @@ for x in (ids_train_x):
     mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
     print(mask.shape)
     mask = cv2.imread(y,0)
-    mask = np.array([cv2.resize(mask,(im_width,im_height))])
+    mask = np.array(cv2.resize(mask,(im_width,im_height)))
+    mask = np.expand_dims(mask, axis=1)
     mask = mask/255.0
     print(mask.shape)
     #X_train[count] = x_img/255.0
