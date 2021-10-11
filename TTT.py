@@ -67,8 +67,7 @@ for x in (ids_train_x):
     # Load masks
     mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
     mask = mask/255.0
-    #X_train[count] = x_img/255.0
-    #y_train[count] = mask/255.0
+
     new_imgs = view_as_windows(x_img, (patch_width, patch_height, 3), (patch_width//2, patch_height//2, 3))
     #print("Number of Patches")
     #print(new_imgs.shape)
@@ -78,7 +77,6 @@ for x in (ids_train_x):
     for patch in new_masks:
         y_train.append(patch)
     count = count+1
-
 
 
 print("Loading Testing Data")
@@ -115,15 +113,19 @@ X_train = X_train.reshape(-1,patch_height,patch_width,3)
 y_train = y_train.reshape(-1,patch_height,patch_width)
 
 X_test = X_test.reshape(-1,patch_height,patch_width,3)
-y_test = y_test.reshape(-1,patch_height,patch_width,1)
+# y_test = y_test.reshape(-1,patch_height,patch_width,1)
+y_test = y_test.reshape(-1,patch_height,patch_width)
 
 X_train = np.transpose(X_train, (0, 3, 1, 2))
 # y_train = np.transpose(y_train, (0, 3, 1, 2))
 X_test = np.transpose(X_test, (0, 3, 1, 2))
-y_test = np.transpose(y_test, (0, 3, 1, 2))
+# y_test = np.transpose(y_test, (0, 3, 1, 2))
+
+
+#-----------------------------------------------------------------------------
 
 # 1. Create dataset
-img_scale = [im_width,im_height]
+# img_scale = [im_width,im_height]
 # dataset = BasicDataset(TRAIN_PATH_IMAGES, TRAIN_PATH_GT, img_scale)
 dataset = MyDataset(X_train,y_train)
 
@@ -164,7 +166,7 @@ else:
     print ("Successfully created the directory %s" % dir_checkpoint)
 
 amp = False
-learning_rate = 0.001
+learning_rate = 0.003
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # 4. Set up the optimizer, the loss, the learning rate scheduler and the loss scaling for AMP
