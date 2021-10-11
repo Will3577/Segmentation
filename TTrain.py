@@ -243,8 +243,10 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
+X_train = X_train.reshape(-1,patch_height,patch_width,3)
+y_train = y_train.reshape(-1,patch_height,patch_width,1)
 dataset = TensorDataset(X_train, y_train)
-loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loader = DataLoader(dataset, batch_size=8, num_workers=1)
 loaders = {"train": loader, "valid": loader}
 
 optimizer = torch.optim.Adam(model1.parameters())
