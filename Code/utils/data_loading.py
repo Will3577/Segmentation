@@ -123,7 +123,9 @@ class MyDataset(Dataset):
   def __getitem__(self, idx):
     img = self.img_list[idx]
     mask = self.mask_list[idx]
-    return img
+    return {'image':img,
+            'mask':mask
+            }
 
 class CarvanaDataset(BasicDataset):
     def __init__(self, images_dir, masks_dir, scale=1):
