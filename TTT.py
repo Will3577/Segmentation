@@ -16,6 +16,7 @@ import torch.nn as nn
 from Code.utils.data_loading import *
 import glob
 from unet import UNet
+from Code.utils.dice_score import *
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
