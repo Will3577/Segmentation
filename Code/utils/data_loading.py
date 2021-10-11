@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 
 
 class BasicDataset(Dataset):
-    def __init__(self, images_dir: str, masks_dir: str, scale: list = [1000,1000], mask_suffix: str = ''):
+    def __init__(self, images_dir: str, masks_dir: str, scale: list = [1000,1000], mask_suffix: str = '_bin_mask'):
         self.images_dir = Path(images_dir)
         self.masks_dir = Path(masks_dir)
         # assert 0 < scale <= 1, 'Scale must be between 0 and 1'
@@ -34,7 +34,7 @@ class BasicDataset(Dataset):
         assert newW > 0 and newH > 0, 'Scale is too small, resized images would have no pixel'
         if is_mask:
             pil_img = ImageOps.grayscale(pil_img)
-            
+
         pil_img = pil_img.resize((newW, newH))
         img_ndarray = np.asarray(pil_img)
 
