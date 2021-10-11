@@ -37,7 +37,7 @@ class BasicDataset(Dataset):
         if is_mask:
             pil_img = ImageOps.grayscale(pil_img)
 
-        pil_img = pil_img.resize((newW, newH))
+        # pil_img = pil_img.resize((newW, newH))
         img_ndarray = np.asarray(pil_img)
 
         # if img_ndarray.ndim == 2 and not is_mask:
@@ -59,14 +59,14 @@ class BasicDataset(Dataset):
         return imgs#img_ndarray
 
     @classmethod
-    def load(cls, filename):
+    def load(cls, filename, scale):
         ext = splitext(filename)[1]
         if ext in ['.npz', '.npy']:
             return Image.fromarray(np.load(filename))
         elif ext in ['.pt', '.pth']:
             return Image.fromarray(torch.load(filename).numpy())
         else:
-            return img_to_array(load_img(filename, color_mode='rgb'))
+            return img_to_array(load_img(filename, color_mode='rgb',target_size=scale))
             # return Image.open(filename)
 
     def __getitem__(self, idx):
@@ -76,8 +76,8 @@ class BasicDataset(Dataset):
 
         assert len(mask_file) == 1, f'Either no mask or multiple masks found for the ID {name}: {mask_file}'
         assert len(img_file) == 1, f'Either no image or multiple images found for the ID {name}: {img_file}'
-        mask = self.load(mask_file[0])
-        img = self.load(img_file[0])
+        mask = self.load(mask_file[0],self.scale)
+        img = self.load(img_file[0],self.scale)
 
         assert img.size == mask.size, \
             'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
