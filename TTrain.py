@@ -83,12 +83,12 @@ for x in (ids_train_x):
 
     # x_img = img_to_array(load_img(x, color_mode='rgb', target_size=[im_width,im_height]))
     x_img = cv2.imread(x)
-    x_img = cv2.resize(x_img,(1000,1000))
+    x_img = cv2.resize(x_img,(im_width,im_height))
     x_img = x_img/255.0
     # Load masks
     # mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
     mask = cv2.imread(y,0)
-    mask = cv2.resize(mask,(1000,1000))
+    mask = np.array(cv2.resize(mask,(im_width,im_height)))
     mask = mask/255.0
     #X_train[count] = x_img/255.0
     #y_train[count] = mask/255.0
@@ -112,12 +112,12 @@ for x in (ids_test_x):
     y = glob.glob(config['TEST_PATH_GT']+fn+'*')[0]
     # x_img = img_to_array(load_img(x, color_mode='rgb', target_size=[im_width,im_height]))
     x_img = cv2.imread(x)
-    x_img = cv2.resize(x_img,(1000,1000))
+    x_img = cv2.resize(x_img,(im_width,im_height))
     x_img = x_img/255.0
     # Load masks
     # mask = img_to_array(load_img(y, color_mode='grayscale', target_size=[im_width,im_height]))
     mask = cv2.imread(y,0)
-    mask = cv2.resize(mask,(1000,1000))
+    mask = cv2.resize(mask,(im_width,im_height))
     mask = mask/255.0
     #X_test[count] = x_img/255.0
     #y_test[count] = mask/255.0
