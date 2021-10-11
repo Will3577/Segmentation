@@ -15,6 +15,7 @@ import torch
 import torch.nn as nn
 from Code.utils.data_loading import *
 import glob
+from unet import UNet
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -136,12 +137,13 @@ train_loader = DataLoader(train_set, shuffle=True, **loader_args)
 val_loader = DataLoader(val_set, shuffle=False, drop_last=True, **loader_args)
 
 
-net = smp.Unet(
-        encoder_name="resnet34",        # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
-        encoder_weights="imagenet",     # use `imagenet` pre-trained weights for encoder initialization
-        in_channels=3,                  # model input channels (1 for gray-scale images, 3 for RGB, etc.)
-        classes=2,                      # model output channels (number of classes in your dataset)
-    )
+# net = smp.Unet(
+#         encoder_name="resnet34",        # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
+#         encoder_weights="imagenet",     # use `imagenet` pre-trained weights for encoder initialization
+#         in_channels=3,                  # model input channels (1 for gray-scale images, 3 for RGB, etc.)
+#         classes=2,                      # model output channels (number of classes in your dataset)
+#     )
+net = UNet(n_channels=3, n_classes=2, bilinear=True)
 
 from tqdm import tqdm
 from torch import optim
