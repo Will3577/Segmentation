@@ -108,7 +108,10 @@ y_train = np.array(y_train)
 X_test = np.array(X_test) 
 y_test = np.array(y_test)
 
-
+X_train = X_train.reshape(-1,patch_height,patch_width,3)
+y_train = y_train.reshape(-1,patch_height,patch_width,1)
+X_test = X_test.reshape(-1,patch_height,patch_width,3)
+y_test = y_test.reshape(-1,patch_height,patch_width,1)
 
 # 1. Create dataset
 img_scale = [im_width,im_height]

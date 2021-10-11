@@ -116,7 +116,7 @@ class MyDataset(Dataset):
     self.img_list = img_list
     self.mask_list = mask_list
     print(img_list.shape,mask_list.shape)
-    assert img_list.shape==mask_list.shape
+    assert img_list.shape[0]==mask_list.shape[0]
 
   def __len__(self):
     return len(self.img_list)
