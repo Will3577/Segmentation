@@ -63,7 +63,7 @@ class BasicDataset(Dataset):
             imgs = imgs.reshape(-1,patch_height,patch_width,3)
         else:
             imgs = imgs.reshape(-1,patch_height,patch_width,1)
-        return imgs#img_ndarray
+        return img_ndarray
 
     @classmethod
     def load(cls, filename, scale):
