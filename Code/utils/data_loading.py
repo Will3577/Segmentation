@@ -58,6 +58,7 @@ class BasicDataset(Dataset):
         
         for im in new_imgs:
             imgs.append(im)
+        imgs = np.array(imgs)
         if not is_mask:
             imgs = imgs.reshape(-1,patch_height,patch_width,3)
         else:
