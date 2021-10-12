@@ -209,7 +209,7 @@ for epoch in range(epochs):
                 #                     multiclass=True)
                 loss = dice_loss(F.softmax(masks_pred, dim=1).float(),
                                     F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
-                                    multiclass=False)
+                                    multiclass=True)
                 # loss = jaccard_distance_loss(F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float().cpu().detach().numpy(),
                 #                     F.softmax(masks_pred, dim=1).float().cpu().detach().numpy()
                 #                     )
