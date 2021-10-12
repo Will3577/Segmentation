@@ -18,6 +18,10 @@ import glob
 from unet import UNet
 from Code.utils.dice_score import *
 
+import warnings
+warnings.filterwarnings("ignore")
+
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 with open('./config.json') as config_file:
@@ -220,7 +224,7 @@ for epoch in range(epochs):
 
             # Evaluation round
             if global_step % (n_train // (10 * batch_size)) == 0:
-                histograms = {}
+                # histograms = {}
                 # for tag, value in net.named_parameters():
                     # tag = tag.replace('/', '.')
                     # histograms['Weights/' + tag] = wandb.Histogram(value.data.cpu())
