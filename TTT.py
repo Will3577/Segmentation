@@ -17,7 +17,7 @@ from Code.utils.data_loading import *
 import glob
 from unet import UNet
 from Code.utils.dice_score import *
-from Code.utils.lossfunctions import *
+# from Code.utils.lossfunctions import *
 
 import warnings
 warnings.filterwarnings("ignore")
