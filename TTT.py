@@ -17,7 +17,7 @@ from Code.utils.data_loading import *
 import glob
 from unet import UNet
 from Code.utils.dice_score import *
-# from Code.utils.lossfunctions import *
+from Code.utils.lossfunctions import *
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -207,12 +207,12 @@ for epoch in range(epochs):
                 #         + dice_loss(F.softmax(masks_pred, dim=1).float(),
                 #                     F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
                 #                     multiclass=True)
-                loss = dice_loss(F.softmax(masks_pred, dim=1).float(),
-                                    F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
-                                    multiclass=True)
-                # loss = jaccard_distance_loss(F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
-                #                     F.softmax(masks_pred, dim=1).float()
-                #                     )
+                # loss = dice_loss(F.softmax(masks_pred, dim=1).float(),
+                #                     F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
+                #                     multiclass=True)
+                loss = jaccard_distance_loss(F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float().cpu().detach().numpy(),
+                                    F.softmax(masks_pred, dim=1).float().cpu().detach().numpy()
+                                    )
 
             optimizer.zero_grad(set_to_none=True)
             grad_scaler.scale(loss).backward()
