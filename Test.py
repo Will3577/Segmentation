@@ -24,7 +24,6 @@ def createTiles(img):
     pad = sizeNew - size
     imgNew = np.zeros((sizeNew,sizeNew,3))
     imgNew[pad//2:sizeNew-(pad//2),pad//2:sizeNew-(pad//2),:] = img
-
     #save_img("Check.png", imgNew)
 
     new_imgs = view_as_windows(imgNew, (patch_width, patch_height, 3), (patch_width, patch_height, 3))
