@@ -53,7 +53,7 @@ def mergeTiles(tiles):
     return img
 
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 with open('./config.json') as config_file:
     config = json.load(config_file)
